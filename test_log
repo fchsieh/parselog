@@ -1,0 +1,15 @@
+Log ID	Phone	Operator	mcc/mnc	Network Status	Battery	Location(Lat,Lng)	Status	Description	Upload Error	Task Error	Date(UTC+0)
+1	H4133	None	0/0	disconnected	65%	(-1,-1.002004)	offline	None	idle	None	Oct. 25, 2019, 10:52 a.m.
+2	H4133	None	0/0	WIFI	65%	(-1,-1)	start_mobileinsight	None	idle	None	Oct. 25, 2019, 10:52 a.m.
+3	H4133	None	0/0	WIFI	69%	(-1,-1)	idle	None	idle	None	Oct. 25, 2019, 10:51 a.m.
+4	H4133	None	0/0	WIFI	69%	(-1,-1)	idle	None	idle	None	Oct. 25, 2019, 10:49 a.m.
+5	H4133	None	0/0	WIFI	69%	(-1,-1)	idle	None	idle	None	Oct. 25, 2019, 10:49 a.m.
+6	H4133	None	0/0	WIFI	69%	(-1,-1.001792)	idle	None	idle	None	Oct. 25, 2019, 10:46 a.m.
+7	H4133	None	0/0	WIFI	69%	(-1,-1)	idle	None	idle	None	Oct. 25, 2019, 10:46 a.m.
+8	H4133	None	0/0	WIFI	69%	(-1,-1)	idle	None	idle	None	Oct. 25, 2019, 10:44 a.m.
+9	H4133	None	0/0	WIFI	29%	(-1,-1)	idle	None	idle	None	Oct. 25, 2019, 10:43 a.m.
+10	H4133	None	0/0	WIFI	49%	(-1,-1)	idle	None	idle	None	Oct. 25, 2019, 10:43 a.m.
+11	H4133	None	0/0	UMTS	67%	(-1,-1)	idle	None	idle	None	Oct. 25, 2019, 9:43 a.m.
+12	H4133	None	0/0	HSPA+	79%	(0,0)	idle	None	idle	None	Oct. 25, 2019, 9:42 a.m.
+13	H4133	None	0/0	UMTS	57%	(0,0)	idle	None	idle	None	Oct. 25, 2019, 9:42 a.m.
+14	H4133	None	0/0	UMTS	69%	(0,0)	idle	None	idle	None	Oct. 25, 2019, 9:42 a.m.
