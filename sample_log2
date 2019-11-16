@@ -1,0 +1,131 @@
+Log ID	Phone	Operator	mcc/mnc	Network Status	Battery	Location(Lat,Lng)	Status	Description	Upload Status	Task Error	Date(UTC+0)
+f60fcd94	E6653	中華電信	466/92	WIFI	100%	(22.99708210,120.221225)	idle	None	uploading	None	Nov. 6, 2019, 4:53 p.m.
+1e01835a	E6653	中華電信	466/92	WIFI	100%	(22.99676280,120.221028)	idle	None	uploading	None	Nov. 6, 2019, 4:53 p.m.
+2fe5721e	E6653	中華電信	466/92	WIFI	100%	(22.99690170,120.221122)	idle	None	uploading	None	Nov. 6, 2019, 4:53 p.m.
+b92d8aaa	E6653	中華電信	466/92	WIFI	100%	(22.99678930,120.221051)	idle	None	uploading	None	Nov. 6, 2019, 4:52 p.m.
+417694cf	E6653	中華電信	466/92	WIFI	100%	(22.99687640,120.221119)	idle	None	uploading	None	Nov. 6, 2019, 4:51 p.m.
+dbb47eec	E6653	中華電信	466/92	WIFI	100%	(22.99679500,120.221162)	idle	None	uploading	None	Nov. 6, 2019, 4:50 p.m.
+8fd2d77b	E6653	中華電信	466/92	WIFI	100%	(22.99679500,120.221162)	idle	None	check	None	Nov. 6, 2019, 4:50 p.m.
+8fd2b276	E6653	中華電信	466/92	WIFI	100%	(22.99679500,120.221162)	task_complete	MMLabv2	idle	None	Nov. 6, 2019, 4:50 p.m.
+09c21cd8	E6653	中華電信	466/92	WIFI	100%	(22.99679500,120.221162)	stop	MMLabv2	idle	None	Nov. 6, 2019, 4:50 p.m.
+276e3c0e	E6653	中華電信	466/92	WIFI	100%	(22.99702610,120.221218)	stop	MMLabv2	idle	None	Nov. 6, 2019, 4:50 p.m.
+5a46c827	E6653	中華電信	466/92	LTE	100%	(22.99702610,120.221218)	stop	MMLabv2	idle	None	Nov. 6, 2019, 4:50 p.m.
+30c8459c	E6653	中華電信	466/92	LTE	100%	(22.99702610,120.221218)	stop	MMLabv2	idle	None	Nov. 6, 2019, 4:50 p.m.
+dc05e094	E6653	中華電信	466/92	LTE	100%	(22.99702610,120.221218)	running	MMLabv2	idle	None	Nov. 6, 2019, 4:49 p.m.
+0fce6e7e	E6653	中華電信	466/92	LTE	100%	(22.99682510,120.221090)	running	MMLabv2	idle	None	Nov. 6, 2019, 4:48 p.m.
+bb42fa2f	E6653	中華電信	466/92	LTE	100%	(22.99702850,120.221218)	running	MMLabv2	idle	None	Nov. 6, 2019, 4:48 p.m.
+81551f29	E6653	中華電信	466/92	LTE	100%	(22.99714040,120.221309)	running	MMLabv2	idle	None	Nov. 6, 2019, 4:47 p.m.
+73377c59	E6653	中華電信	466/92	LTE	100%	(22.99714040,120.221309)	running	MMLabv2	idle	None	Nov. 6, 2019, 4:46 p.m.
+d5d63565	E6653	中華電信	466/92	LTE	100%	(22.99702960,120.221218)	running	MMLabv2	idle	None	Nov. 6, 2019, 4:46 p.m.
+ca99797e	E6653	中華電信	466/92	LTE	100%	(22.99692860,120.221214)	running	MMLabv2	idle	None	Nov. 6, 2019, 4:46 p.m.
+7a6cc303	E6653	中華電信	466/92	LTE	100%	(22.99712050,120.221304)	running	MMLabv2	idle	None	Nov. 6, 2019, 4:44 p.m.
+9cfff583	E6653	中華電信	466/92	LTE	100%	(22.99692030,120.221192)	running	MMLabv2	idle	None	Nov. 6, 2019, 4:43 p.m.
+db1ff2cf	E6653	中華電信	466/92	LTE	100%	(22.99683270,120.221096)	running	MMLabv2	idle	None	Nov. 6, 2019, 4:42 p.m.
+952c4989	E6653	中華電信	466/92	LTE	100%	(22.99705520,120.221310)	running	MMLabv2	idle	None	Nov. 6, 2019, 4:42 p.m.
+3c32661c	E6653	中華電信	466/92	LTE	100%	(22.99692660,120.221140)	running	MMLabv2	idle	None	Nov. 6, 2019, 4:42 p.m.
+f4a1f604	E6653	中華電信	466/92	LTE	100%	(22.99705450,120.221274)	running	MMLabv2	idle	None	Nov. 6, 2019, 4:41 p.m.
+362b8241	E6653	中華電信	466/92	LTE	100%	(22.99692540,120.221158)	running	MMLabv2	idle	None	Nov. 6, 2019, 4:40 p.m.
+bed751a8	E6653	中華電信	466/92	LTE	100%	(22.99710790,120.221308)	running	MMLabv2	idle	None	Nov. 6, 2019, 4:40 p.m.
+7650e51f	E6653	中華電信	466/92	LTE	100%	(22.99699930,120.221275)	running	MMLabv2	idle	None	Nov. 6, 2019, 4:38 p.m.
+e60901fa	E6653	中華電信	466/92	LTE	100%	(22.99687870,120.221204)	running	MMLabv2	idle	None	Nov. 6, 2019, 4:37 p.m.
+2a6e1427	E6653	中華電信	466/92	LTE	100%	(22.99710060,120.221331)	running	MMLabv2	idle	None	Nov. 6, 2019, 4:37 p.m.
+bee02b03	E6653	中華電信	466/92	LTE	100%	(22.99693210,120.221208)	running	MMLabv2	idle	None	Nov. 6, 2019, 4:36 p.m.
+5b678964	E6653	中華電信	466/92	LTE	100%	(22.99701650,120.221307)	running	MMLabv2	idle	None	Nov. 6, 2019, 4:36 p.m.
+ab4d3b07	E6653	中華電信	466/92	LTE	100%	(22.99695980,120.221163)	running	MMLabv2	idle	None	Nov. 6, 2019, 4:34 p.m.
+9b9c7108	E6653	中華電信	466/92	LTE	100%	(22.99719670,120.221334)	running	MMLabv2	idle	None	Nov. 6, 2019, 4:33 p.m.
+0bed85d8	E6653	中華電信	466/92	LTE	100%	(22.99698140,120.221259)	running	MMLabv2	idle	None	Nov. 6, 2019, 4:33 p.m.
+93338ac7	E6653	中華電信	466/92	LTE	100%	(22.99707050,120.221285)	running	MMLabv2	idle	None	Nov. 6, 2019, 4:33 p.m.
+7a7897e1	E6653	中華電信	466/92	WIFI	100%	(22.99707050,120.221285)	running	MMLabv2	idle	None	Nov. 6, 2019, 4:33 p.m.
+32b4593a	E6653	中華電信	466/92	WIFI	100%	(22.99707050,120.221285)	start_task	MMLabv2	idle	None	Nov. 6, 2019, 4:33 p.m.
+2b7a0b9b	E6653	中華電信	466/92	WIFI	100%	(22.99707050,120.221285)	start_task	MMLabv2	idle	None	Nov. 6, 2019, 4:32 p.m.
+9b0b4177	E6653	中華電信	466/92	WIFI	100%	(22.99707050,120.221285)	start_mobileinsight	MMLabv2	canceled	None	Nov. 6, 2019, 4:32 p.m.
+e3bfd5a3	E6653	中華電信	466/92	WIFI	100%	(22.99699310,120.221180)	start_mobileinsight	MMLabv2	canceled	None	Nov. 6, 2019, 4:32 p.m.
+7fc6ccf8	E6653	中華電信	466/92	WIFI	100%	(22.99699310,120.221180)	idle	None	uploading	None	Nov. 6, 2019, 4:32 p.m.
+b4a5f1a8	E6653	中華電信	466/92	WIFI	100%	(22.99722260,120.221338)	idle	None	uploading	None	Nov. 6, 2019, 4:32 p.m.
+9f6525fb	E6653	中華電信	466/92	WIFI	100%	(22.99691900,120.221135)	idle	None	uploading	None	Nov. 6, 2019, 4:32 p.m.
+7a7945dc	E6653	中華電信	466/92	WIFI	100%	(22.99691900,120.221135)	idle	None	uploading	None	Nov. 6, 2019, 4:31 p.m.
+0cb2fcc5	E6653	中華電信	466/92	WIFI	100%	(22.99705630,120.221256)	idle	None	uploading	None	Nov. 6, 2019, 4:31 p.m.
+c2aa6238	E6653	中華電信	466/92	WIFI	100%	(22.99696610,120.221225)	idle	None	uploading	None	Nov. 6, 2019, 4:31 p.m.
+7299b155	E6653	中華電信	466/92	WIFI	100%	(22.99673660,120.221042)	idle	None	uploading	None	Nov. 6, 2019, 4:31 p.m.
+0cd042ba	E6653	中華電信	466/92	WIFI	100%	(22.99703850,120.221285)	task_complete	MMLabv2	idle	None	Nov. 6, 2019, 4:31 p.m.
+13c599d3	E6653	中華電信	466/92	WIFI	100%	(22.99703850,120.221285)	stop	MMLabv2	idle	None	Nov. 6, 2019, 4:31 p.m.
+5dcae746	E6653	中華電信	466/92	LTE	100%	(22.99703850,120.221285)	stop	MMLabv2	idle	None	Nov. 6, 2019, 4:30 p.m.
+85a0138f	E6653	中華電信	466/92	LTE	100%	(22.99703850,120.221285)	running	MMLabv2	idle	None	Nov. 6, 2019, 4:30 p.m.
+f6b0ebdc	E6653	中華電信	466/92	LTE	100%	(22.99675880,120.221077)	running	MMLabv2	idle	None	Nov. 6, 2019, 4:29 p.m.
+2f0a3a81	E6653	中華電信	466/92	LTE	100%	(22.99705870,120.221273)	running	MMLabv2	idle	None	Nov. 6, 2019, 4:29 p.m.
+0ab053ba	E6653	中華電信	466/92	LTE	100%	(22.99714520,120.221313)	running	MMLabv2	idle	None	Nov. 6, 2019, 4:29 p.m.
+a141c1c1	E6653	中華電信	466/92	LTE	100%	(22.99690190,120.221118)	running	MMLabv2	idle	None	Nov. 6, 2019, 4:28 p.m.
+4dfc9bee	E6653	中華電信	466/92	LTE	100%	(22.99658500,120.220972)	running	MMLabv2	idle	None	Nov. 6, 2019, 4:28 p.m.
+e010f895	E6653	中華電信	466/92	LTE	100%	(22.99698010,120.221185)	running	MMLabv2	idle	None	Nov. 6, 2019, 4:27 p.m.
+a860cc5c	E6653	中華電信	466/92	LTE	100%	(22.99687440,120.221131)	running	MMLabv2	idle	None	Nov. 6, 2019, 4:27 p.m.
+05c972e8	E6653	中華電信	466/92	LTE	100%	(22.99672750,120.221014)	running	MMLabv2	idle	None	Nov. 6, 2019, 4:26 p.m.
+b3b260e3	E6653	中華電信	466/92	LTE	100%	(22.99703040,120.221266)	running	MMLabv2	idle	None	Nov. 6, 2019, 4:26 p.m.
+95eac62b	E6653	中華電信	466/92	LTE	100%	(22.99697850,120.221184)	running	MMLabv2	idle	None	Nov. 6, 2019, 4:25 p.m.
+a5924c3e	E6653	中華電信	466/92	LTE	100%	(22.99684780,120.221086)	running	MMLabv2	idle	None	Nov. 6, 2019, 4:25 p.m.
+0c0dbbf2	E6653	中華電信	466/92	LTE	100%	(22.99710240,120.221293)	running	MMLabv2	idle	None	Nov. 6, 2019, 4:24 p.m.
+2ca93c8b	E6653	中華電信	466/92	LTE	100%	(22.99701580,120.221235)	running	MMLabv2	idle	None	Nov. 6, 2019, 4:24 p.m.
+e714d47f	E6653	中華電信	466/92	LTE	100%	(22.99692430,120.221209)	running	MMLabv2	idle	None	Nov. 6, 2019, 4:23 p.m.
+35764a0a	E6653	中華電信	466/92	LTE	100%	(22.99682060,120.221145)	running	MMLabv2	idle	None	Nov. 6, 2019, 4:23 p.m.
+b4166a4e	E6653	中華電信	466/92	LTE	100%	(22.99694540,120.221201)	running	MMLabv2	idle	None	Nov. 6, 2019, 4:23 p.m.
+a8b2db1a	E6653	中華電信	466/92	LTE	100%	(22.99701820,120.221261)	running	MMLabv2	idle	None	Nov. 6, 2019, 4:22 p.m.
+4186d695	E6653	中華電信	466/92	LTE	100%	(22.99710850,120.221306)	running	MMLabv2	idle	None	Nov. 6, 2019, 4:20 p.m.
+d03ed681	E6653	中華電信	466/92	LTE	100%	(22.99681310,120.221181)	running	MMLabv2	idle	None	Nov. 6, 2019, 4:19 p.m.
+95010c23	E6653	中華電信	466/92	LTE	100%	(22.99683420,120.221145)	running	MMLabv2	idle	None	Nov. 6, 2019, 4:19 p.m.
+4c4ea795	E6653	中華電信	466/92	WIFI	100%	(22.99683420,120.221145)	running	MMLabv2	idle	None	Nov. 6, 2019, 4:19 p.m.
+0703cf43	E6653	中華電信	466/92	WIFI	100%	(22.99683420,120.221145)	start_task	MMLabv2	idle	None	Nov. 6, 2019, 4:19 p.m.
+230328f4	E6653	中華電信	466/92	WIFI	100%	(22.99683420,120.221145)	start_task	MMLabv2	idle	None	Nov. 6, 2019, 4:19 p.m.
+a40dfa9f	E6653	中華電信	466/92	WIFI	100%	(22.99683420,120.221145)	start_mobileinsight	MMLabv2	idle	None	Nov. 6, 2019, 4:19 p.m.
+f1f8a38e	E6653	中華電信	466/92	WIFI	100%	(22.99683420,120.221145)	idle	None	complete	None	Nov. 6, 2019, 4:18 p.m.
+ff741549	E6653	中華電信	466/92	WIFI	100%	(22.99672140,120.221104)	idle	None	complete	None	Nov. 6, 2019, 4:18 p.m.
+c25fc485	E6653	中華電信	466/92	WIFI	100%	(22.99682060,120.221145)	idle	None	complete	None	Nov. 6, 2019, 4:17 p.m.
+c081238a	E6653	中華電信	466/92	WIFI	100%	(22.99702790,120.221242)	idle	None	uploading	None	Nov. 6, 2019, 4:17 p.m.
+6806b475	E6653	中華電信	466/92	WIFI	100%	(22.99702790,120.221242)	idle	None	check	None	Nov. 6, 2019, 4:17 p.m.
+3d91ecce	E6653	中華電信	466/92	WIFI	100%	(22.99702790,120.221242)	task_complete	MMLabv2	idle	None	Nov. 6, 2019, 4:17 p.m.
+06af10bb	E6653	中華電信	466/92	WIFI	100%	(22.99702790,120.221242)	stop	MMLabv2	idle	None	Nov. 6, 2019, 4:17 p.m.
+42887dae	E6653	中華電信	466/92	WIFI	100%	(22.99702790,120.221242)	mobileinsight_likely_dead	MMLabv2	idle	MobileInsight likely dead	Nov. 6, 2019, 4:16 p.m.
+c1fa0fd7	E6653	中華電信	466/92	WIFI	100%	(22.99692900,120.221214)	mobileinsight_likely_dead	MMLabv2	idle	MobileInsight likely dead	Nov. 6, 2019, 4:16 p.m.
+369bb317	E6653	中華電信	466/92	WIFI	100%	(22.99702630,120.221242)	mobileinsight_likely_dead	MMLabv2	idle	MobileInsight likely dead	Nov. 6, 2019, 4:14 p.m.
+fe5129a5	E6653	中華電信	466/92	WIFI	100%	(22.99689530,120.221179)	mobileinsight_likely_dead	MMLabv2	idle	MobileInsight likely dead	Nov. 6, 2019, 4:14 p.m.
+09041ac9	E6653	中華電信	466/92	WIFI	100%	(22.99706640,120.221261)	mobileinsight_likely_dead	MMLabv2	idle	MobileInsight likely dead	Nov. 6, 2019, 4:13 p.m.
+91ee6bb8	E6653	中華電信	466/92	WIFI	100%	(22.99686200,120.221175)	mobileinsight_likely_dead	MMLabv2	idle	MobileInsight likely dead	Nov. 6, 2019, 4:12 p.m.
+4bac2b5f	E6653	中華電信	466/92	WIFI	100%	(22.99701450,120.221266)	mobileinsight_likely_dead	MMLabv2	idle	MobileInsight likely dead	Nov. 6, 2019, 4:12 p.m.
+6d5e4d97	E6653	中華電信	466/92	WIFI	100%	(22.99681270,120.221160)	mobileinsight_likely_dead	MMLabv2	idle	MobileInsight likely dead	Nov. 6, 2019, 4:10 p.m.
+be2e46f1	E6653	中華電信	466/92	WIFI	100%	(22.99705750,120.221279)	mobileinsight_likely_dead	MMLabv2	idle	MobileInsight likely dead	Nov. 6, 2019, 4:10 p.m.
+0552eb47	E6653	中華電信	466/92	WIFI	100%	(22.99692510,120.221226)	mobileinsight_likely_dead	MMLabv2	idle	MobileInsight likely dead	Nov. 6, 2019, 4:10 p.m.
+2457704d	E6653	中華電信	466/92	WIFI	100%	(22.99706920,120.221284)	mobileinsight_likely_dead	MMLabv2	idle	MobileInsight likely dead	Nov. 6, 2019, 4:09 p.m.
+52433512	E6653	中華電信	466/92	WIFI	100%	(22.99682060,120.221145)	mobileinsight_likely_dead	MMLabv2	idle	MobileInsight likely dead	Nov. 6, 2019, 4:09 p.m.
+e1a78994	E6653	中華電信	466/92	WIFI	100%	(22.99671690,120.221013)	mobileinsight_likely_dead	MMLabv2	idle	MobileInsight likely dead	Nov. 6, 2019, 4:08 p.m.
+a21b9c56	E6653	中華電信	466/92	WIFI	100%	(22.99671690,120.221013)	running	MMLabv2	idle	None	Nov. 6, 2019, 4:07 p.m.
+2d4e7f06	E6653	中華電信	466/92	WIFI	100%	(22.99682060,120.221145)	running	MMLabv2	idle	None	Nov. 6, 2019, 4:06 p.m.
+3f130a48	E6653	中華電信	466/92	LTE	100%	(22.99682060,120.221145)	running	MMLabv2	idle	None	Nov. 6, 2019, 4:06 p.m.
+5d330b69	E6653	中華電信	466/92	LTE	100%	(22.99700580,120.221251)	running	MMLabv2	idle	None	Nov. 6, 2019, 4:05 p.m.
+ded3d5b0	E6653	中華電信	466/92	LTE	100%	(22.99683130,120.221145)	running	MMLabv2	idle	None	Nov. 6, 2019, 4:05 p.m.
+9873ef47	E6653	中華電信	466/92	LTE	100%	(22.99694870,120.221203)	running	MMLabv2	idle	None	Nov. 6, 2019, 4:05 p.m.
+ee751d0b	E6653	中華電信	466/92	WIFI	100%	(22.99694870,120.221203)	running	MMLabv2	idle	None	Nov. 6, 2019, 4:05 p.m.
+805d12a5	E6653	中華電信	466/92	WIFI	100%	(22.99694870,120.221203)	start_task	MMLabv2	idle	None	Nov. 6, 2019, 4:05 p.m.
+a144061e	E6653	中華電信	466/92	WIFI	100%	(22.99694870,120.221203)	start_task	MMLabv2	idle	None	Nov. 6, 2019, 4:04 p.m.
+cfd945b9	E6653	中華電信	466/92	WIFI	100%	(22.99694870,120.221203)	start_mobileinsight	MMLabv2	idle	None	Nov. 6, 2019, 4:04 p.m.
+7ee54473	E6653	中華電信	466/92	WIFI	100%	(22.99706170,120.221286)	start_mobileinsight	MMLabv2	idle	None	Nov. 6, 2019, 4:04 p.m.
+c06b4a67	E6653	中華電信	466/92	WIFI	100%	(22.99706170,120.221286)	idle	None	idle	None	Nov. 6, 2019, 4:04 p.m.
+a360853b	E6653	中華電信	466/92	WIFI	100%	(22.99689770,120.221196)	idle	None	idle	None	Nov. 6, 2019, 4:04 p.m.
+2e04a1c7	E6653	中華電信	466/92	WIFI	100%	(22.99688940,120.221135)	idle	None	idle	None	Nov. 6, 2019, 4:02 p.m.
+680568e6	E6653	中華電信	466/92	WIFI	100%	(22.99688940,120.221135)	idle	None	complete	None	Nov. 6, 2019, 4:02 p.m.
+0d9687af	E6653	中華電信	466/92	WIFI	100%	(22.99697930,120.221183)	idle	None	complete	None	Nov. 6, 2019, 4 p.m.
+6e0106a5	E6653	中華電信	466/92	WIFI	100%	(22.99676800,120.221171)	idle	None	complete	None	Nov. 6, 2019, 4 p.m.
+a7874f0b	E6653	中華電信	466/92	WIFI	100%	(22.99693910,120.221152)	idle	None	complete	None	Nov. 6, 2019, 3:59 p.m.
+0e9e8840	E6653	中華電信	466/92	WIFI	100%	(22.99693910,120.221152)	idle	None	uploading	None	Nov. 6, 2019, 3:59 p.m.
+28978761	E6653	中華電信	466/92	WIFI	100%	(22.99669720,120.221118)	idle	None	uploading	None	Nov. 6, 2019, 3:59 p.m.
+fad6e252	E6653	中華電信	466/92	WIFI	100%	(22.99669720,120.221118)	idle	None	uploading	None	Nov. 6, 2019, 3:59 p.m.
+505153b2	E6653	中華電信	466/92	WIFI	100%	(22.99700950,120.221254)	task_complete	MMLabv2	idle	None	Nov. 6, 2019, 3:59 p.m.
+10672e8c	E6653	中華電信	466/92	WIFI	100%	(22.99700950,120.221254)	stop	MMLabv2	idle	None	Nov. 6, 2019, 3:59 p.m.
+36ce09f1	E6653	中華電信	466/92	LTE	100%	(22.99700950,120.221254)	stop	MMLabv2	idle	None	Nov. 6, 2019, 3:59 p.m.
+a5a4f2e5	E6653	中華電信	466/92	LTE	100%	(22.99700950,120.221254)	running	MMLabv2	idle	None	Nov. 6, 2019, 3:58 p.m.
+d9698275	E6653	中華電信	466/92	LTE	100%	(22.99673380,120.221109)	running	MMLabv2	idle	None	Nov. 6, 2019, 3:58 p.m.
+e81bf19b	E6653	中華電信	466/92	WIFI	100%	(22.99685630,120.221157)	running	MMLabv2	idle	None	Nov. 6, 2019, 3:58 p.m.
+e4d453c1	E6653	中華電信	466/92	WIFI	100%	(22.99685630,120.221157)	start_task	MMLabv2	idle	None	Nov. 6, 2019, 3:58 p.m.
+c6014427	E6653	中華電信	466/92	WIFI	100%	(22.99685630,120.221157)	start_task	MMLabv2	idle	None	Nov. 6, 2019, 3:57 p.m.
+403a30ae	E6653	中華電信	466/92	WIFI	100%	(22.99685630,120.221157)	start_mobileinsight	MMLabv2	canceled	None	Nov. 6, 2019, 3:57 p.m.
+2bc11b61	E6653	中華電信	466/92	WIFI	100%	(22.99694950,120.221204)	start_mobileinsight	MMLabv2	canceled	None	Nov. 6, 2019, 3:57 p.m.
+a5d69456	E6653	中華電信	466/92	WIFI	100%	(22.99694950,120.221204)	idle	None	check	None	Nov. 6, 2019, 3:57 p.m.
+bfbd8026	E6653	中華電信	466/92	WIFI	100%	(22.99694950,120.221204)	idle	None	idle	None	Nov. 6, 2019, 3:57 p.m.
+2473bdf2	E6653	中華電信	466/92	WIFI	100%	(22.99684860,120.221157)	idle	None	idle	None	Nov. 6, 2019, 3:56 p.m.

@@ -6,9 +6,6 @@ import pandas as pd
 
 import sys
 
-# Global settings
-# pd.options.mode.chained_assignment = None  # ignore some warnings
-
 
 class settings:
     # LOG filename
@@ -36,6 +33,16 @@ class settings:
     # For getting running intervals
     IDLE_TIME = 900
 
+    idle_state = [
+        "idle",
+        "offline",
+        "download_complete",
+        "downloading",
+        "task_complete",
+        "mobileinsight_likely_dead",
+    ]
+    running_state = ["start_task", "running", "start_mobileinsight"]
+
 
 def timeformat(str):
     """Convert time format string to datetime format
@@ -49,6 +56,7 @@ def timeformat(str):
     str = str.replace("a.m.", "AM")
     str = str.replace("p.m.", "PM")
     str = str.replace("midnight", "12:00 AM")
+    str = str.replace("noon", "12:00 PM")
     # add :00 on the hour
     if str.find(":") == -1:
         splited = str.split(" ")
@@ -57,7 +65,15 @@ def timeformat(str):
     return datetime.strptime(str, "%b. %d, %Y, %I:%M %p")
 
 
+def time_delta(dateobj1, dateobj2):
+    # returns delta in seconds
+    return abs((dateobj1 - dateobj2).total_seconds())
+
+
 def readlog(filename):
+    print("Reading: %s" % filename)
+    print("================================")
+
     # Initialize, read data and do preprocessing
     with open(filename, "r", encoding="utf-8") as file:
         raw_data = [x.rstrip().split("\t") for x in file.readlines()]
@@ -84,406 +100,266 @@ def readlog(filename):
     # Remove percent sign for Battery
     logdata["Battery"] = logdata["Battery"].apply(lambda str: int(str.replace("%", "")))
     # Prevent duplicate checking
-    logdata.insert(len(logdata.columns), "stop_checked", False)
-    logdata.insert(len(logdata.columns), "start_checked", False)
-    logdata.insert(len(logdata.columns), "should_start_checked", False)
-    logdata.insert(len(logdata.columns), "upload_checked", False)
-    logdata.insert(len(logdata.columns), "shouldnt_start_checked", False)
-    # for performance evalulation
-    logdata.insert(len(logdata.columns), "should_start", False)
-    logdata.insert(len(logdata.columns), "perf_checked", False)
-    return logdata
+    return logdata.iloc[::-1].reset_index().drop(["index"], axis=1)
 
 
-def time_delta(dateobj1, dateobj2):
-    # returns delta in seconds
-    return (dateobj1 - dateobj2).total_seconds()
+def is_in_table(table, last_elem):
+    for _, v in table.items():
+        if v["list"][-1]["Log ID"] == last_elem["Log ID"]:
+            return True
+    return False
 
 
-def check_stop(logdata, index):
-    current_log = logdata.iloc[index]
-    if current_log["stop_checked"]:
-        pass
-    else:
+def table_insert(table, item):
+    for _, v in table.items():
+        # if out of range, not append
+        if (
+            time_delta(item["Date(UTC+0)"], v["time"]) < settings.IDLE_TIME
+        ):  # is within time range
+            v["list"].append(item)
+    if not is_in_table(table, item):
+        # create new loglist and insert to table
+        table[item["Log ID"]] = {"time": item["Date(UTC+0)"], "list": [item]}
+
+    return table
+
+
+def check_idle(table):
+    should_start_running = False
+    # check every list in dict
+    for _, v in table.items():
+        time = time_delta(v["time"], v["list"][-1]["Date(UTC+0)"])
+        time = 1 if time == 0 else time  # prevent divide by zero
+        # calculate distance
         dist = 0
-        last = current_log
-        for i in range(index + 1, len(logdata)):  # check previous log
-            if logdata.iloc[i]["Status"] in [
-                "idle",
-                "offline",
-                "task_complete",
-            ]:  # end of running status
-                break
-
-            # Set flag to prevent duplicate checking
-            logdata.at[
-                logdata["Log ID"] == logdata.iloc[i]["Log ID"], "stop_checked"
-            ] = True
-
-            # Save moved distance
-            current = logdata.iloc[i - 1]["Location(Lat,Lng)"]
-            prev = logdata.iloc[i]["Location(Lat,Lng)"]
-            dist += geopy.distance.distance(current, prev).miles
-
-            # Update last log
-            last = logdata.iloc[i]
-
-        time = time_delta(current_log["Date(UTC+0)"], last["Date(UTC+0)"])
-        stopped = False
-        # Find "stop" status after last "running" to check if should stop or should continue
-        for i in range(index - 1, -1, -1):
-            if logdata.iloc[i]["Status"] == "stop":
-                stopped = True
-                break
-        if time == 0:
-            time = 1  # prevent division by 0
-        if (dist / time) >= settings.MOVE_SPEED:
-            # Should not stop, check if current task has stopped
-            if stopped:
-                speed = dist / time * 3600
-                print(
-                    "[STOP] Should NOT STOP at ID: %s~%s, Speed: %f miles/hr (during last hour)."
-                    % (current_log["Log ID"], last["Log ID"], speed)
-                )
-        elif (dist / time) < settings.MOVE_SPEED:
-            # Should stop, check if current task has stopped
-            if not stopped:
-                speed = dist / time * 3600
-                print(
-                    "[STOP] Should STOP at ID: %s~%s, Speed: %f miles/hr (during last hour)."
-                    % (current_log["Log ID"], last["Log ID"], speed)
-                )
-
-
-def check_should_start(logdata, index):
-    current_log = logdata.iloc[index]
-    if current_log["start_checked"]:
-        pass
-    else:
-        log_list = []
-        for i in range(
-            index, len(logdata)
-        ):  # Find "idle" and "task_complete", to check if should start
-            if logdata.iloc[i]["Status"] not in ["idle", "task_complete"]:
-                break
-            # Set flag to prevent duplicate check
-            logdata.at[
-                logdata["Log ID"] == logdata.iloc[i]["Log ID"], "start_checked"
-            ] = True
-            log_list.append(logdata.iloc[i])
-
-        # Start parsing pre-starting status
-        separate_list = []
-        # separate log by time range to list of list
-        for i in range(len(log_list)):
-            current = log_list[i]
-            current_list = [current]
-            for j in range(i + 1, len(log_list)):
-                if (
-                    time_delta(current["Date(UTC+0)"], log_list[j]["Date(UTC+0)"])
-                    >= settings.MOVE_TIME
-                ):
-                    break
-                current_list.append(log_list[j])
-            separate_list.append(current_list)
-
-        # Parse each log list in separate list
-        for l in separate_list:
-            dist = 0
-            time = time_delta(l[0]["Date(UTC+0)"], l[-1]["Date(UTC+0)"])
-            if time == 0:
-                continue  # ignore this list
-            for i in range(len(l) - 1):
-                # calculate moved distance
-                dist += geopy.distance.distance(
-                    l[i]["Location(Lat,Lng)"], l[i + 1]["Location(Lat,Lng)"]
-                ).miles
-            speed = dist / time
-            if speed >= settings.MOVE_SPEED:
-                # should start, check if task starts
-                # get log location
-                assert (
-                    len(logdata.index[logdata["Log ID"] == l[0]["Log ID"]].tolist())
-                    == 1
-                ), "Error: Should not have duplicate log id"
-                start_idx = logdata.index[logdata["Log ID"] == l[0]["Log ID"]].tolist()[
-                    0
-                ]
-                # find first "starting" status
-                start_task = False
-                for j in range(start_idx, -1, -1):
-                    if logdata.iloc[j]["Status"] == "start_mobileinsight":
-                        if logdata.iloc[j]["should_start_checked"]:  # already checked
-                            start_task = True
-                            break
-                        else:  # first starting status found, set flag and end checking
-                            logdata.at[
-                                logdata["Log ID"] == logdata.iloc[j]["Log ID"],
-                                "should_start_checked",
-                            ] = True
-                            start_task = True
-                            break
-                if not start_task:
-                    print(
-                        "[START] Should START at %s~%s, Speed: %f miles/hr (during last hour)."
-                        % (l[0]["Log ID"], l[-1]["Log ID"], speed * 3600)
-                    )
-                """
-                We dont need to handle speed < MOVE_SPEED, check_shouldnt_start will handle it.
-                """
-
-
-def check_shouldnt_start(logdata, index):
-    if logdata.iloc[index]["shouldnt_start_checked"] == True:
-        pass
-    else:
-        last_start_mob_idx = index
-        for i in range(index, len(logdata)):
-            if logdata.iloc[i]["Status"] != "start_mobileinsight":
-                break
-            last_start_mob_idx = i  # get last index of "start_mobileinsight"
-            logdata.at[
-                logdata["Log ID"] == logdata.iloc[i]["Log ID"], "shouldnt_start_checked"
-            ] = True
-        # Calculate average speed
-        dist = 0
-        idle_list = []
-        for i in range(last_start_mob_idx + 1, len(logdata)):
-            if (
-                logdata.iloc[i]["Status"] not in ["task_complete", "idle"]
-                or time_delta(  # out of range
-                    logdata.iloc[last_start_mob_idx]["Date(UTC+0)"],
-                    logdata.iloc[i]["Date(UTC+0)"],
-                )
-                >= settings.MOVE_TIME
-            ):
-                break
-            # idle status before start_mobileinsight, check average speed
-            idle_list.append(logdata.iloc[i])
-        for i in range(len(idle_list) - 1):
+        for elem in range(1, len(v["list"])):
             dist += geopy.distance.distance(
-                idle_list[i]["Location(Lat,Lng)"], idle_list[i + 1]["Location(Lat,Lng)"]
+                v["list"][elem]["Location(Lat,Lng)"],
+                v["list"][elem - 1]["Location(Lat,Lng)"],
             ).miles
-        time = time_delta(idle_list[0]["Date(UTC+0)"], idle_list[-1]["Date(UTC+0)"])
-        if time == 0:
-            time = 1  # prevent division by 0
+
+        speed = dist / time
+        if speed >= settings.MOVE_SPEED:
+            # should start running
+            should_start_running = True
+
+        elif speed < settings.MOVE_SPEED:
+            # should not start running
+            should_start_running = False
+
+    # return last interval's status
+    return should_start_running, speed * 3600
+
+
+def check_stop(table):
+    should_stop_running = False
+    for _, v in table.items():
+        time = time_delta(v["time"], v["list"][-1]["Date(UTC+0)"])
+        time = 1 if time == 0 else time
+        dist = 0
+        for elem in range(1, len(v["list"])):
+            dist += geopy.distance.distance(
+                v["list"][elem]["Location(Lat,Lng)"],
+                v["list"][elem - 1]["Location(Lat,Lng)"],
+            ).miles
         speed = dist / time
         if speed < settings.MOVE_SPEED:
-            # Should not start running
-            print(
-                "[START] Should NOT START at: %s, Speed: %f miles/hr (during last hour)."
-                % (logdata.iloc[last_start_mob_idx]["Log ID"], speed * 3600)
-            )
+            # should stop running
+            should_stop_running = True
+
+        elif speed >= settings.MOVE_SPEED:
+            should_stop_running = False
+
+    return should_stop_running, speed * 3600
 
 
-def check_battery(logdata, index, prev_start_id, prev_end_id):
-    current_log = logdata.iloc[index]
-    battery_list = []
-    for j in range(index, len(logdata)):
-        if (
-            logdata.iloc[j]["Status"] == "offline"
-            or time_delta(current_log["Date(UTC+0)"], logdata.iloc[j]["Date(UTC+0)"])
-            > settings.BATTERY_TIME
-        ):
+def perf_evaluate(perf_list):
+    # get last stop status position
+    for i in range(len(perf_list) - 1, -1, -1):
+        if perf_list[i]["Status"] not in settings.idle_state:
+            perf_list = perf_list[: i + 1]
             break
-        battery_list.append(logdata.iloc[j])
-    # Find decreasing intervals
-    dec_list = []
-    indicator_arr = [False for _ in range(len(battery_list))]
-    for i in range(len(battery_list) - 1, 0, -1):
-        if battery_list[i]["Battery"] > battery_list[i - 1]["Battery"]:
-            tmp_list = []
-            for j in range(i, -1, -1):
-                if battery_list[j]["Battery"] < battery_list[j - 1]["Battery"]:
-                    if not indicator_arr[j]:
-                        tmp_list.append(battery_list[j])
-                        dec_list.append(tmp_list)
-                    indicator_arr[j] = True
-                    break
-                if not indicator_arr[j]:
-                    tmp_list.append(battery_list[j])
-                indicator_arr[j] = True
-    # Check every decreasing intervals
-    for l in dec_list:
-        battery_decreased = l[0]["Battery"] - l[-1]["Battery"]
-        if battery_decreased >= settings.BATTERY_LEVEL:
-            if (
-                l[0]["Log ID"] not in prev_end_id
-                and l[-1]["Log ID"] not in prev_start_id
-            ):
-                print(
-                    "[BATTERY] %s~%s Decreased: %d%%"
-                    % (l[-1]["Log ID"], l[0]["Log ID"], battery_decreased)
-                )
-                prev_end_id.append(l[0]["Log ID"])
-                prev_start_id.append(l[-1]["Log ID"])
-    return prev_start_id, prev_end_id
-
-
-def check_upload(logdata, index):
-    uploaded = False
-    current_log = logdata.iloc[index]
-    for i in range(index - 1, -1, -1):
-        if (
-            time_delta(logdata.iloc[i]["Date(UTC+0)"], current_log["Date(UTC+0)"])
-            > settings.UPLOAD_TIME  # out of range
-            or logdata.iloc[i]["Status"] == "task_complete"  # another task
-        ):
-            break
-        if logdata.iloc[i]["Upload Status"] == "complete":
-            uploaded = True
-            break
-    for i in range(index + 1, len(logdata)):  # set flag to prevent duplicate checking
-        if logdata.iloc[i]["Status"] != "task_complete":
-            break
-        logdata.at[
-            logdata["Log ID"] == logdata.iloc[i]["Log ID"], "upload_checked"
-        ] = True
-    if not uploaded:
-        print("[UPLOAD] Log was not uploaded: %s" % current_log["Log ID"])
-
-
-def check_timestamp(logdata, index):
-    current_log = logdata.iloc[index]
-    time_hr = current_log["Date(UTC+0)"].hour
-    time_min = current_log["Date(UTC+0)"].minute
-    if time_hr >= settings.NIGHT_START and time_hr < settings.NIGHT_END:
-        print("[TIME] %s, %d:%02d" % (current_log["Log ID"], time_hr, time_min))
-
-
-def perf_eval(logdata, index):
-    running_list = []
+    # get idle time and total running time
+    start_idle = None
     idle_time = 0
-    if logdata.iloc[index]["perf_checked"]:
-        return 0, 0
-    else:
-        start_idle = None
-        for i in range(index, len(logdata)):
-            if (
-                logdata.iloc[i]["Status"] == "start_mobileinsight"
-                and logdata.iloc[i]["should_start"]
-            ):
-                # end of running interval
-                break
-            # if the idle time is too long, exit current running interval
-            # get idle time within running states
-            idle_state = [
-                "idle",
-                "offline",
-                "download_complete",
-                "downloading",
-                "task_complete",
-                "mobileinsight_likely_dead",
-            ]
-            if (
-                start_idle is None
-                and i > 0
-                and logdata.iloc[i - 1]["Status"] not in idle_state
-                and logdata.iloc[i]["Status"] in idle_state
-            ):
-                # start of idle state
-                start_idle = logdata.iloc[i]
-            if (
-                start_idle is not None
-                and i + 1 < len(logdata)
-                and logdata.iloc[i]["Status"] in idle_state
-                and logdata.iloc[i + 1]["Status"] not in idle_state
-            ):
-                idle = time_delta(
-                    start_idle["Date(UTC+0)"], logdata.iloc[i]["Date(UTC+0)"]
-                )
-                # end of idle state, check idle time
-                if idle >= settings.IDLE_TIME:
-                    print("IDLE: ", start_idle["Log ID"], logdata.iloc[i]["Log ID"])
-                    start_idle = None
-                    break
-                # add idle time
-                idle_time += idle
-                # reset idle state
-                start_idle = None
-            # still in idle, but lasting too long
-            elif start_idle is not None and logdata.iloc[i]["Status"] in idle_state:
-                idle = time_delta(
-                    start_idle["Date(UTC+0)"], logdata.iloc[i]["Date(UTC+0)"]
-                )
-                if idle >= settings.IDLE_TIME:
-                    start_idle = None
-                    break
-                # does not need to add idle state here, since it should be terminated
+    for i in range(1, len(perf_list)):
+        if (
+            perf_list[i - 1]["Status"] not in settings.idle_state
+            and perf_list[i]["Status"] in settings.idle_state
+        ):
+            start_idle = perf_list[i]
 
-            # set flag to prevent duplicate checking
-            logdata.at[
-                logdata["Log ID"] == logdata.iloc[i]["Log ID"], "perf_checked"
-            ] = True
-            # still in current running state, merge
-            running_list.append(logdata.iloc[i])
+        if (
+            start_idle is not None
+            and perf_list[i]["Status"] not in settings.idle_state
+            and perf_list[i - 1]["Status"] in settings.idle_state
+        ):
+            idle_time += time_delta(
+                perf_list[i - 1]["Date(UTC+0)"], start_idle["Date(UTC+0)"]
+            )
+            start_idle = None
 
-        # find last start_mobileinsight
-        last_start = None
-        for i in range(len(running_list) - 1, -1, -1):
-            if running_list[i]["Status"] == "start_mobileinsight":
-                last_start = i
-                break
-        running_list = running_list[:last_start]
-        # get total running time
-        total_time = time_delta(
-            running_list[0]["Date(UTC+0)"], running_list[-1]["Date(UTC+0)"]
-        )
-        return total_time, idle_time
+    total_run_time = time_delta(
+        perf_list[0]["Date(UTC+0)"], perf_list[-1]["Date(UTC+0)"]
+    )
+    return idle_time, total_run_time
 
 
 def main():
     if len(sys.argv) > 1:
-        print("Reading: " + sys.argv[1])
         logdata = readlog(sys.argv[1])
     else:
         # default log file name
         logdata = readlog(settings.filename)
 
-    prev_end_id = []  # For removing duplicate battery messages
-    prev_start_id = []
+    idle_list_table = {}
+    should_start_running = False
+
+    running_list_table = {}
+    should_stop_running = False
+
+    log_upload_timer = None
+    log_uploaded = False
+
+    perf_eval = False
+    perf_list = []
+    inactive_time = 0
+    start_idle = None
+
+    total_idle = 0
+    total_run = 0
 
     for i in range(len(logdata)):
-        current_log = logdata.iloc[i]
+        prev = logdata.iloc[0] if i == 0 else logdata.iloc[i - 1]
+        current = logdata.iloc[i]
 
-        # Check running task: whether should stop or not
-        if current_log["Status"] == "running":
-            check_stop(logdata, i)
+        # ================= Check should not Start =================
+        if current["Status"] in settings.idle_state:
+            idle_list_table = table_insert(idle_list_table, current)
 
-        # Check "IDLE" status: whether should start or not
-        if current_log["Status"] in ["idle", "task_complete"]:
-            check_should_start(logdata, i)
+        # status changed from idle to active, clear table and summary
+        if (
+            current["Status"] == "start_mobileinsight"
+            and prev["Status"] in settings.idle_state
+        ):
+            should_start_running, speed = check_idle(idle_list_table)
+            idle_list_table = {}
 
-        # If start, check whether should start or not
-        if current_log["Status"] == "start_mobileinsight":
-            check_shouldnt_start(logdata, i)
-
-        # Check battery level per hour
-        if current_log["Status"] != "offline":
-            prev_start_id, prev_end_id = check_battery(
-                logdata, i, prev_start_id, prev_end_id
+        # if start running, check if indeed should start
+        if (
+            current["Status"] == "start_mobileinsight"
+            and prev["Status"] in settings.idle_state  # prevent duplicate check
+            and not should_start_running
+        ):
+            print(
+                "[START] Should NOT START at %s, Speed: %f miles/hr (during last hour)."
+                % (current["Log ID"], speed)
             )
 
-        # Check upload after task complete
+        # ================= Check should not stop =================
+        if current["Status"] in settings.running_state:
+            running_list_table = table_insert(running_list_table, current)
+
+        # status changed from running to stopped
+        if current["Status"] == "stop" and prev["Status"] in settings.running_state:
+            should_stop_running, speed = check_stop(running_list_table)
+            running_list_table = {}
+
         if (
-            not current_log["upload_checked"]
-            and current_log["Status"] == "task_complete"
+            current["Status"] == "stop"
+            and prev["Status"] in settings.running_state  # prevent duplicate check
+            and not should_stop_running
         ):
-            check_upload(logdata, i)
+            print(
+                "[STOP] Should NOT STOP at %s, Speed: %f miles/hr (during last hour)."
+                % (current["Log ID"], speed)
+            )
 
-        # Check timestamp: should not run during night time
-        # check_timestamp(logdata, i)
+        # ================= Check Upload after task_complete =================
+        if (
+            current["Status"] == "task_complete"
+        ):  # log should upload within "settings.UPLOAD_TIME" minutes
+            log_upload_timer = current
+            log_uploaded = False
 
-    total_run_time = 0
-    idle_time = 0
-    for i in range(len(logdata)):
-        # Start performance evaluation
-        if logdata.iloc[i]["Status"] == "task_complete":
-            run, idle = perf_eval(logdata, i)
-            total_run_time += run
-            idle_time += idle
-    print("Performance: ", idle_time / total_run_time)
+        if log_upload_timer is not None:
+            passed_time = time_delta(
+                current["Date(UTC+0)"], log_upload_timer["Date(UTC+0)"]
+            )
+            if (
+                current["Upload Status"] == "complete"
+                and passed_time < settings.UPLOAD_TIME
+            ):
+                log_uploaded = True
+
+            if (
+                passed_time >= settings.UPLOAD_TIME
+                or current["Status"] == "start_mobileinsight"  # a new task has started
+                or i == len(logdata) - 1  # end of log
+            ):
+                if not log_uploaded:
+                    print(
+                        "[UPLOAD] Log was NOT uploaded: %s" % log_upload_timer["Log ID"]
+                    )
+                # clear timer
+                log_upload_timer = None
+                log_uploaded = False
+
+        # TODO: battery check
+        # TODO: should start but not start immediately
+        # TODO: should stop but not stop immediately
+
+        # ================= Performance evaluation =================
+
+        if (
+            current["Status"] in settings.idle_state
+            and prev["Status"] not in settings.idle_state
+            and start_idle is None
+        ):
+            start_idle = current
+
+        if current["Status"] in settings.idle_state and start_idle is not None:
+            inactive_time = time_delta(
+                current["Date(UTC+0)"], start_idle["Date(UTC+0)"]
+            )
+
+        if (
+            current["Status"] == "start_mobileinsight"
+            and prev["Status"] in settings.idle_state
+        ):
+            # end of idle
+            start_idle = None
+
+        if (
+            not perf_eval
+            and current["Status"] == "start_mobileinsight"
+            and prev["Status"] in settings.idle_state
+        ):
+            perf_eval = True
+
+        if perf_eval:
+            perf_list.append(current)
+            if inactive_time >= settings.IDLE_TIME or (
+                i == len(logdata) - 1  # end of log
+            ):
+                # get running interval, start evaluate
+                perf_idle, perf_total = perf_evaluate(perf_list)
+                total_idle += perf_idle
+                total_run += perf_total
+                perf_eval = False
+                perf_list = []
+                inactive_time = 0
+                start_idle = None
+
+        # end of performance evaluation
+
+        # if inactive for too long, stop performance evaluation
+
+    # performance evaluation
+    total_run = 1 if total_run == 0 else total_run
+    print("Performance: %f" % ((total_run - total_idle) / total_run))
 
 
 if __name__ == "__main__":
     main()
+
