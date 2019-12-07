@@ -1,58 +1,14 @@
+import sys
 from ast import literal_eval
 from datetime import datetime
 
 import geopy.distance
 import pandas as pd
 
-import sys
-
-
-class settings:
-    # LOG filename
-    filename = "sample_log"
-
-    # Detect movement
-    MOVE_SPEED = 10 / 3600  # 10 miles/hour = 10/3600 miles/sec
-    MOVE_TIME = 3600  # for checking idle status
-    START_TIME = 900  # Should start within 15 mins
-
-    # For timestamp checking
-    NIGHT_START = 18  # UTC+0: 18:00~24:00
-    NIGHT_END = 24
-
-    # For battery checking: decreased 15% per hour
-    BATTERY_LEVEL = 15  # 15%
-    BATTERY_TIME = 3600  # 1hr
-
-    # For upload log checking: upload within 20 mins
-    UPLOAD_TIME = 1200  # 20 mins
-
-    # For removing default coordinates
-    IGNORE_COORD = [(0, 0), (-1, -1)]
-
-    # For getting running intervals
-    IDLE_TIME = 900
-
-    idle_state = [
-        "idle",
-        "offline",
-        "download_complete",
-        "downloading",
-        "task_complete",
-        "mobileinsight_likely_dead",
-    ]
-    running_state = ["start_task", "running", "start_mobileinsight"]
+from utils import *
 
 
 def timeformat(str):
-    """Convert time format string to datetime format
-    
-    Arguments:
-        str {string} -- Date format from raw log.
-    
-    Returns:
-        string -- Datetime format string
-    """
     str = str.replace("a.m.", "AM")
     str = str.replace("p.m.", "PM")
     str = str.replace("midnight", "12:00 AM")
@@ -63,11 +19,6 @@ def timeformat(str):
         splited[-2] += ":00"
         str = " ".join(splited)
     return datetime.strptime(str, "%b. %d, %Y, %I:%M %p")
-
-
-def time_delta(dateobj1, dateobj2):
-    # returns delta in seconds
-    return abs((dateobj1 - dateobj2).total_seconds())
 
 
 def readlog(filename):
@@ -124,8 +75,8 @@ def table_insert(table, item):
     return table
 
 
-def check_idle(table):
-    should_start_running = False
+def check_shouldnt_start(table):
+    shouldnt_start_running = True
     # check every list in dict
     for _, v in table.items():
         time = time_delta(v["time"], v["list"][-1]["Date(UTC+0)"])
@@ -141,17 +92,17 @@ def check_idle(table):
         speed = dist / time
         if speed >= settings.MOVE_SPEED:
             # should start running
-            should_start_running = True
+            shouldnt_start_running = False
 
         elif speed < settings.MOVE_SPEED:
             # should not start running
-            should_start_running = False
+            shouldnt_start_running = True
 
     # return last interval's status
-    return should_start_running, speed * 3600
+    return shouldnt_start_running, speed * 3600
 
 
-def check_stop(table):
+def check_shouldnt_stop(table):
     should_stop_running = False
     for _, v in table.items():
         time = time_delta(v["time"], v["list"][-1]["Date(UTC+0)"])
@@ -171,6 +122,19 @@ def check_stop(table):
             should_stop_running = False
 
     return should_stop_running, speed * 3600
+
+
+def check_should_stop(current, check_should_stop_list):
+    # add into running list
+    check_should_stop_list.add(current)
+    stop_pos, avg_speed = check_should_stop_list.summary()
+    return stop_pos, avg_speed
+
+
+def check_should_start(current, check_should_start_list):
+    check_should_start_list.add(current)
+    start_pos, avg_speed = check_should_start_list.summary()
+    return start_pos, avg_speed
 
 
 def perf_evaluate(perf_list):
@@ -209,23 +173,36 @@ def main():
     if len(sys.argv) > 1:
         logdata = readlog(sys.argv[1])
     else:
-        # default log file name
+        # read default log file name
         logdata = readlog(settings.filename)
 
+    # for checking should not start running
     idle_list_table = {}
-    should_start_running = False
+    shouldnt_start_running = False
 
+    # for checking should not stop running
     running_list_table = {}
     should_stop_running = False
 
+    # for checking upload log
     log_upload_timer = None
     log_uploaded = False
 
+    # for checking should stop running when running
+    stop_pos = None
+    avg_speed_running = -1
+    check_should_stop_list = RunList()
+
+    # for checking should start running when idle
+    start_pos = None
+    avg_speed_idle = -1
+    check_should_start_list = IdleList()
+
+    # for performance evaluation
     perf_eval = False
     perf_list = []
     inactive_time = 0
     start_idle = None
-
     total_idle = 0
     total_run = 0
 
@@ -242,18 +219,21 @@ def main():
             current["Status"] == "start_mobileinsight"
             and prev["Status"] in settings.idle_state
         ):
-            should_start_running, speed = check_idle(idle_list_table)
+            shouldnt_start_running, speed = check_shouldnt_start(idle_list_table)
             idle_list_table = {}
 
         # if start running, check if indeed should start
         if (
             current["Status"] == "start_mobileinsight"
             and prev["Status"] in settings.idle_state  # prevent duplicate check
-            and not should_start_running
+            and shouldnt_start_running
         ):
-            print(
-                "[START] Should NOT START at %s, Speed: %f miles/hr (during last hour)."
-                % (current["Log ID"], speed)
+            logger(
+                "START",
+                "Should "
+                + setcolor("RED", "NOT START")
+                + " at %s, Speed: %f miles/hr (during last hour)."
+                % (current["Log ID"], speed),
             )
 
         # ================= Check should not stop =================
@@ -262,7 +242,7 @@ def main():
 
         # status changed from running to stopped
         if current["Status"] == "stop" and prev["Status"] in settings.running_state:
-            should_stop_running, speed = check_stop(running_list_table)
+            should_stop_running, speed = check_shouldnt_stop(running_list_table)
             running_list_table = {}
 
         if (
@@ -270,9 +250,12 @@ def main():
             and prev["Status"] in settings.running_state  # prevent duplicate check
             and not should_stop_running
         ):
-            print(
-                "[STOP] Should NOT STOP at %s, Speed: %f miles/hr (during last hour)."
-                % (current["Log ID"], speed)
+            logger(
+                "STOP",
+                "Should "
+                + setcolor("RED", "NOT STOP")
+                + " at %s, Speed: %f miles/hr (during last hour)."
+                % (current["Log ID"], speed),
             )
 
         # ================= Check Upload after task_complete =================
@@ -298,16 +281,76 @@ def main():
                 or i == len(logdata) - 1  # end of log
             ):
                 if not log_uploaded:
-                    print(
-                        "[UPLOAD] Log was NOT uploaded: %s" % log_upload_timer["Log ID"]
+                    logger(
+                        "UPLOAD",
+                        "Log was "
+                        + setcolor("RED", "NOT ")
+                        + "uploaded: %s" % log_upload_timer["Log ID"],
                     )
                 # clear timer
                 log_upload_timer = None
                 log_uploaded = False
 
         # TODO: battery check
-        # TODO: should start but not start immediately
-        # TODO: should stop but not stop immediately
+
+        # ================= Should start =================
+        if current["Status"] in settings.idle_state and start_pos is None:
+            start_pos, avg_speed_idle = check_should_start(
+                current, check_should_start_list
+            )
+
+        if start_pos is not None:
+            if (
+                current["Status"] == "start_mobileinsight"
+                and time_delta(current["Date(UTC+0)"], start_pos["Date(UTC+0)"])
+                < settings.TRIGGER_TIME
+            ):
+                check_should_start_list = IdleList()
+                start_pos = None
+            elif (
+                time_delta(current["Date(UTC+0)"], start_pos["Date(UTC+0)"])
+                >= settings.TRIGGER_TIME
+            ):
+                logger(
+                    "START",
+                    "Should "
+                    + setcolor("RED", "START")
+                    + " at %s, Speed: %f miles/hr (during last hour)."
+                    % (start_pos["Log ID"], avg_speed_idle),
+                )
+                check_should_start_list = IdleList()
+                start_pos = None
+
+        # ================= Should stop =================
+        if current["Status"] == "running":
+            stop_pos, avg_speed_running = check_should_stop(
+                current, check_should_stop_list
+            )
+
+        if stop_pos is not None:  # should stop, start check
+            if (
+                current["Status"] == "stop"
+                and time_delta(current["Date(UTC+0)"], stop_pos["Date(UTC+0)"])
+                < settings.TRIGGER_TIME
+            ):
+                # running task stopped
+                check_should_stop_list = RunList()
+                stop_pos = None
+            elif (
+                time_delta(current["Date(UTC+0)"], stop_pos["Date(UTC+0)"])
+                >= settings.TRIGGER_TIME
+            ):
+                logger(
+                    "STOP",
+                    "Should "
+                    + setcolor("RED", "STOP")
+                    + " at %s, Speed: %f miles/hr (during last hour)."
+                    % (stop_pos["Log ID"], avg_speed_running),
+                )
+                check_should_stop_list = RunList()
+                stop_pos = None
+
+        # ================= Battery check =================
 
         # ================= Performance evaluation =================
 
@@ -339,6 +382,7 @@ def main():
 
         if perf_eval:
             perf_list.append(current)
+            # if inactive for too long, stop performance evaluation
             if inactive_time >= settings.IDLE_TIME or (
                 i == len(logdata) - 1  # end of log
             ):
@@ -353,13 +397,10 @@ def main():
 
         # end of performance evaluation
 
-        # if inactive for too long, stop performance evaluation
-
     # performance evaluation
     total_run = 1 if total_run == 0 else total_run
-    print("Performance: %f" % ((total_run - total_idle) / total_run))
+    logger("Performance", "%f" % ((total_run - total_idle) / total_run))
 
 
 if __name__ == "__main__":
     main()
-
