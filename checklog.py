@@ -322,7 +322,7 @@ def main():
                 start_pos = None
 
         # ================= Should stop =================
-        if current["Status"] == "running":
+        if current["Status"] == "running" and stop_pos is None:
             stop_pos, avg_speed_running = check_should_stop(
                 current, check_should_stop_list
             )
@@ -339,6 +339,7 @@ def main():
             elif (
                 time_delta(current["Date(UTC+0)"], stop_pos["Date(UTC+0)"])
                 >= settings.TRIGGER_TIME
+                or i == len(logdata) - 1
             ):
                 logger(
                     "STOP",

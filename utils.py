@@ -78,6 +78,7 @@ def time_delta(dateobj1, dateobj2):
 
 
 class RunList:
+    # check avg speed when is in running state
     def __init__(self):
         self.run_list = []
 
@@ -105,7 +106,6 @@ class RunList:
             avg_speed = dist / time
             if avg_speed < settings.MOVE_SPEED:
                 stop_pos = self.run_list[-1]
-
         return stop_pos, avg_speed
 
 
