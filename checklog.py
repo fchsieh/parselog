@@ -9,7 +9,7 @@ import sys
 
 class settings:
     # LOG filename
-    filename = "sample_log"
+    filename = "dec6_peng"
 
     # Detect movement
     MOVE_SPEED = 10 / 3600  # 10 miles/hour = 10/3600 miles/sec
@@ -75,7 +75,7 @@ def readlog(filename):
     print("================================")
 
     # Initialize, read data and do preprocessing
-    with open(filename, "r", encoding="utf-8") as file:
+    with open(filename, "r") as file:
         raw_data = [x.rstrip().split("\t") for x in file.readlines()]
     logdata = pd.DataFrame(raw_data[1:])
     logdata.columns = raw_data[0]
@@ -229,6 +229,12 @@ def main():
     total_idle = 0
     total_run = 0
 
+    should_start = 0
+    should_stop = 0
+
+    should_not_start = 0
+    should_not_stop = 0
+
     for i in range(len(logdata)):
         prev = logdata.iloc[0] if i == 0 else logdata.iloc[i - 1]
         current = logdata.iloc[i]
@@ -255,7 +261,9 @@ def main():
                 "[START] Should NOT START at %s, Speed: %f miles/hr (during last hour)."
                 % (current["Log ID"], speed)
             )
-
+	    should_not_start = should_not_start + 1
+	else :
+	    should_start = should_start + 1
         # ================= Check should not stop =================
         if current["Status"] in settings.running_state:
             running_list_table = table_insert(running_list_table, current)
@@ -274,7 +282,9 @@ def main():
                 "[STOP] Should NOT STOP at %s, Speed: %f miles/hr (during last hour)."
                 % (current["Log ID"], speed)
             )
-
+	    should_not_stop = should_not_stop + 1
+	else:
+	    should_stop = should_stop + 1
         # ================= Check Upload after task_complete =================
         if (
             current["Status"] == "task_complete"
@@ -359,6 +369,10 @@ def main():
     total_run = 1 if total_run == 0 else total_run
     print("Performance: %f" % ((total_run - total_idle) / total_run))
 
+    print("Should start: %d" % (should_start))
+    print("Should stop: %d" % (should_stop))
+    print("Should not start: %d" % (should_not_start))
+    print("Should not stop: %d" % (should_not_stop))
 
 if __name__ == "__main__":
     main()
