@@ -9,7 +9,7 @@ import sys
 
 class settings:
     # LOG filename
-    filename = "dec6_peng"
+    filename = "taimen_verzion"
 
     # Detect movement
     MOVE_SPEED = 10 / 3600  # 10 miles/hour = 10/3600 miles/sec
